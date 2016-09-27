@@ -1,0 +1,38 @@
+{
+  "name": "seneca-edissons",
+  "version": "0.0.0",
+  "description": "Microservice framework for edissons infrastructure",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "eslint src && nyc ava --verbose",
+    "test:coverage": "nyc report --reporter=html && open coverage/index.html"
+  },
+  "bin": {
+    "seneca-edissons": "./bin/microservice.js"
+  },
+  "author": "Andrey 'vkfont' Afoninsky",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "babel-eslint": "*",
+    "eslint": "*"
+  },
+  "dependencies": {
+    "babel-core": "^6.14.0",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.14.0",
+    "bluebird": "^3.4.1",
+    "bunyan": "^1.8.1",
+    "bunyan-logstash": "^0.3.4",
+    "config": "^1.21.0",
+    "koa": "^2.0.0-alpha.6",
+    "lodash": "^4.16.2",
+    "opbeat": "^3.15.0",
+    "seneca": "^3.0.0"
+  },
+  "peerDependencies": {
+    "npm-check": "*"
+  }
+}
