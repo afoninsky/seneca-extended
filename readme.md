@@ -1,3 +1,4 @@
 ### extends
 .emitError
 .actAsync
+.logger
