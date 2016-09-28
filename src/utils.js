@@ -8,12 +8,19 @@ module.exports = {
 /**
  * return object with modules in specified directory
  */
-  requireDirectory(dir) {
+  requireDirectory(dir, onlyFunctions = true) {
     return fs.readdirSync(dir).map(name => path.basename(name, '.js')).reduce((accumulator, name) => {
-      accumulator[name] = require(`${dir}/${name}`)
+      const obj = require(`${dir}/${name}`)
+      if (!onlyFunctions || obj instanceof Function) {
+        accumulator[name] = obj
+      }
       return accumulator
     }, {})
   },
+
+/**
+ *
+ */
 
 /**
  * replace default senecajs logger with custom

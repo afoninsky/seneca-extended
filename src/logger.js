@@ -15,26 +15,6 @@ function serializeError(err) {
   return resError
 }
 
-function serializeResponse(res) {
-  const headers = res.header || res.headers
-  const ret = {
-    id: headers['x-request-id'],
-    status: res.status,
-    time: parseInt(headers['x-response-time'], 10)
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    ret.body = res.body
-  }
-  return ret
-}
-
-function serializeRequest(req) {
-  const ret = ld.pick(req, ['method', 'url', 'headers'])
-  if (req.user) {
-    ret.userId = req.user._id
-  }
-  return ret
-}
 
 function streamsFromConfig(cfg) {
   const streams = []
@@ -65,9 +45,7 @@ class Logger {
   constructor(config, pkg, customSerializers) {
 
     const serializers = Object.assign({}, {
-      err: serializeError,
-      req: serializeRequest,
-      res: serializeResponse
+      err: serializeError
     }, customSerializers)
     const tags = ['nodejs', process.env.NODE_ENV || 'development']
     const streams = streamsFromConfig(config)

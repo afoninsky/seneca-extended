@@ -1,7 +1,9 @@
+global.Promise = require('bluebird')
 const config = require('config')
 const Logger = require('./logger')
 const { decorateSeneca, createSenecaLogger } = require('./utils')
-const pkg = require(`${process.cwd()}/package`)
+
+const pkg = require(`${process.env.PWD}/package`)
 
 // create custom logger
 const log = new Logger(config.log, pkg)
