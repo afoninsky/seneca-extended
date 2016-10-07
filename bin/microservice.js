@@ -7,7 +7,7 @@
 if (module.parent) { throw new Error('Im not a module, please launch me directly. Thank you') }
 
 const config = require('config')
-const seneca = require('../src')
+const seneca = require('../src')()
 const { requireDirectory } = require('../src/utils')
 
 const plugins = requireDirectory(`${process.cwd()}/plugins`)

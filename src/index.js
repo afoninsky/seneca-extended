@@ -1,23 +1,28 @@
 global.Promise = require('bluebird')
-const config = require('config')
 const pkg = require(`${process.env.PWD}/package`)
-
-const log = require('./logger')({
-  name: pkg.name,
-  version: pkg.version,
-  level: config.logLevel
-})
-
 const { decorateSeneca, createSenecaLogger } = require('./utils')
 
-// create custom logger
-const seneca = require('seneca')({
-  internal: {
-    logger: createSenecaLogger(log)
+module.exports = (baseConfig = {}) => {
+
+  const extendedConfig = {}
+
+  // create custom logger
+  baseConfig.internal = baseConfig.internal || {}
+  if (!baseConfig.internal.logger) {
+    extendedConfig.internal = extendedConfig.internal || {}
+    const log = require('./logger')({
+      name: pkg.name,
+      version: pkg.version,
+      level: baseConfig.logLevel || 'debug'
+    })
+    extendedConfig.internal.logger = createSenecaLogger(log)
   }
-})
 
-// append additional methods
-const customSeneca = decorateSeneca(seneca, log)
+  const config = Object.assign({}, baseConfig, extendedConfig)
+  const seneca = require('seneca')(config)
 
-module.exports = customSeneca
+  // append additional methods (promisified actions, error emitters, clean loggers etc)
+  const customSeneca = decorateSeneca(seneca, config.internal.logger)
+
+  return customSeneca
+}

@@ -1,6 +1,6 @@
 // const config = require('config')
 const { test } = require('ava')
-const seneca = require(`${process.env.PWD}/src`)
+const seneca = require(`${process.env.PWD}/src`)()
 const { requireDirectory } = require(`${process.env.PWD}/src/utils`)
 const plugins = requireDirectory(`${process.env.PWD}/test/fixtures/plugins`)
 const logger = require(`${process.env.PWD}/src/logger`)
