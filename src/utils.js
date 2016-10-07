@@ -6,23 +6,6 @@ const path = require('path')
 module.exports = {
 
 /**
- * load merged default and project configurations
- */
-  config() {
-    // process.env.SUPPRESS_NO_CONFIG_WARNING = 'y';
-    const currentConfigFolder = process.env.NODE_CONFIG_DIR || `${process.env.PWD}/config`
-    process.env.NODE_CONFIG_DIR = `${__dirname}/../config`
-    const defaultConfig = require('config')
-    delete require.cache[require.resolve('config')]
-    process.env.NODE_CONFIG_DIR = currentConfigFolder
-    const currentConfig = require('config')
-    console.log(defaultConfig)
-    console.log(currentConfig.toJson)
-    console.log(currentConfig.get())
-    // return ld.defaultsDeep({}, defaultConfig, currentConfig)
-  },
-
-/**
  * return object with modules in specified directory
  */
   requireDirectory(dir, onlyFunctions = true) {

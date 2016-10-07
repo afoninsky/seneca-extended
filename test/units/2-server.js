@@ -3,9 +3,7 @@ const { test } = require('ava')
 const seneca = require(`${process.env.PWD}/src`)
 const { requireDirectory } = require(`${process.env.PWD}/src/utils`)
 const plugins = requireDirectory(`${process.env.PWD}/test/fixtures/plugins`)
-const Logger = require(`${process.env.PWD}/src/logger`)
-const pkg = require(`${process.env.PWD}/package`)
-
+const logger = require(`${process.env.PWD}/src/logger`)
 
 for (let name in plugins) {
 	seneca.use(plugins[name])
@@ -47,14 +45,13 @@ test('log something', t => {
   process.stdout.write = () => {}
 
 	t.throws(() => {
-		new Logger({ nosuchconfig: {} }, pkg)
+		logger()
 	})
 
 
-  const log = new Logger({
-    stdout: { level: 'debug' },
-    logstash: { level: 'info' }
-  }, pkg)
+  const log = logger({
+    name: 'test',
+  })
 	log.debug('some message')
 	log.debug(new Error('serialize me plzkthx'))
 	log.debug({err: 'not a error'})
