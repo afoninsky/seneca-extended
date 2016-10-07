@@ -22,3 +22,7 @@ if (!services.length) { throw new Error('no plugins loaded') }
 
 seneca.logger.info(`Services started: ${services.join(', ')}`)
 seneca.listen(config.listen)
+
+if (config.health) {
+  require('../src/health').listen(config.health)
+}

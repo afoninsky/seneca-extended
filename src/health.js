@@ -12,7 +12,7 @@ app.use(ctx => {
   if (method !== 'GET') { return }
 
   switch (url) {
-    case '/_ah/health':
+    case '/healthz':
       ctx.body = info
   }
 })

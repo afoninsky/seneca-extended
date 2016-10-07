@@ -5,24 +5,26 @@ const { decorateSeneca, createSenecaLogger } = require('./utils')
 module.exports = (baseConfig = {}) => {
 
   const extendedConfig = {}
+  const customLogger = baseConfig.customLogger || require('./logger')({
+    name: pkg.name,
+    version: pkg.version,
+    level: baseConfig.logLevel || 'debug'
+  })
 
   // create custom logger
-  baseConfig.internal = baseConfig.internal || {}
-  if (!baseConfig.internal.logger) {
+  if (baseConfig.customLogger) {
+    baseConfig.internal = baseConfig.internal || {}
     extendedConfig.internal = extendedConfig.internal || {}
-    const log = require('./logger')({
-      name: pkg.name,
-      version: pkg.version,
-      level: baseConfig.logLevel || 'debug'
-    })
-    extendedConfig.internal.logger = createSenecaLogger(log)
+    extendedConfig.internal.logger = createSenecaLogger(customLogger)
   }
 
   const config = Object.assign({}, baseConfig, extendedConfig)
+  delete config.customLogger
+
   const seneca = require('seneca')(config)
 
   // append additional methods (promisified actions, error emitters, clean loggers etc)
-  const customSeneca = decorateSeneca(seneca, config.internal.logger)
+  const customSeneca = decorateSeneca(seneca, customLogger)
 
   return customSeneca
 }

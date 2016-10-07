@@ -32,12 +32,6 @@ test('handle internal error', t => {
 		t.regex(err.message, /badfunction is not defined/)
 	})
 })
-//
-// test('ensure healthcheck is working', t => {
-//   return request.get('/_ah/health').then(res => {
-//     t.is(res.data.name, pkg.name)
-//   })
-// })
 
 test('log something', t => {
   // mute stdout
