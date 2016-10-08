@@ -3,7 +3,31 @@ const ld = require('lodash')
 const fs = require('fs')
 const path = require('path')
 
+/**
+ * simple error serializer/deserializer
+ * things to improve:
+ * - pull error (instead new stack will be created on `new`)
+ * - handle .toJSON behaviour
+ * - handle circular links
+ * - check if buffer passed instead of json
+ */
+function serializeError(err) {
+  const resError = ld.pick(err, ['name', 'code', 'message', 'statusCode', 'payload'])
+  resError.stack = err.stack.split('\n').slice(0, 6).join('\n')
+  return resError
+}
+
+function deserializeError(obj) {
+  const err = new Error(obj.message)
+  for(let name in obj) {
+    err[name] = obj[name]
+  }
+  return err
+}
+
 module.exports = {
+
+  serializeError, deserializeError,
 
 /**
  * return object with modules in specified directory
@@ -52,7 +76,7 @@ module.exports = {
       // https://github.com/senecajs/seneca/issues/523#issuecomment-245712042
       seneca.act(...data, (err, res) => {
         if (err) { return callback(err) }
-        if (res.error) { return callback(new Error(res.error.message || 'Unknown microservice error')) }
+        if (res && res.error) { return callback(deserializeError(res.error)) }
         callback(null, res)
       })
     }
@@ -60,7 +84,7 @@ module.exports = {
     // send stringified error to remote host
     const emitError = (error, callback) => {
       callback(null, {
-        error: ld.pick(error, ['message', 'code', 'statusCode'])
+        error: ld.pick(error, ['message', 'code', 'status', 'statusCode'])
       })
     }
 
