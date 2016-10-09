@@ -76,6 +76,7 @@ module.exports = {
       // https://github.com/senecajs/seneca/issues/523#issuecomment-245712042
       seneca.act(...data, (err, res) => {
         if (err) { return callback(err) }
+        // 2do: !!! find how to pass additional error fields to seneca error (ex: .payload is not passed)
         if (res && res.error) { return callback(deserializeError(res.error)) }
         callback(null, res)
       })
@@ -84,7 +85,7 @@ module.exports = {
     // send stringified error to remote host
     const emitError = (error, callback) => {
       callback(null, {
-        error: ld.pick(error, ['message', 'code', 'status', 'statusCode'])
+        error: serializeError(error)
       })
     }
 
