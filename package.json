@@ -1,6 +1,6 @@
 {
   "name": "seneca-edissons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Microservice framework for edissons infrastructure",
   "main": "src/index.js",
   "scripts": {
