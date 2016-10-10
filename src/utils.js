@@ -72,6 +72,15 @@ module.exports = {
   decorateSeneca(seneca, logger) {
     const act = (...data) => {
       const callback = data.pop()
+
+      // sugar stuff: remove from route arguments passed as payload
+      if (data.length > 1) {
+        const payload = data[data.length - 1]
+        if (ld.isPlainObject(data[0]) && ld.isPlainObject(payload)) {
+          data[0] = ld.omit(data[0], Object.keys(payload))
+        }
+      }
+
       // emit error from data, temporal workaround:
       // https://github.com/senecajs/seneca/issues/523#issuecomment-245712042
       seneca.act(...data, (err, res) => {
