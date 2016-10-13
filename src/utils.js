@@ -71,7 +71,7 @@ module.exports = {
  */
   decorateSeneca(seneca, logger) {
     const act = (...data) => {
-      const callback = data.pop()
+      const callback = typeof data[data.length - 1] === 'function' ? data.pop() : ld.noop
 
       // sugar stuff: remove from route arguments passed as payload
       if (data.length > 1) {
@@ -100,6 +100,7 @@ module.exports = {
 
 
     seneca.decorate('actAsync', Promise.promisify(act, {context: seneca}))
+    seneca.decorate('actCustom', act)
     seneca.decorate('emitError', emitError)
     seneca.decorate('logger', logger) // append clean logger without all seneca-specific stuff
     return seneca
