@@ -1,5 +1,5 @@
 const pkg = require(`${process.env.PWD}/package`)
-const { decorateSeneca, createSenecaLogger, loadPlugins } = require(`${__dirname}/utils`)
+const { decorateSeneca, createSenecaLogger } = require(`${__dirname}/utils`)
 
 module.exports = (baseConfig = {}) => {
 
@@ -19,9 +19,5 @@ module.exports = (baseConfig = {}) => {
 
   // append additional methods (promisified actions, error emitters, clean loggers etc)
   const customSeneca = decorateSeneca(seneca, customLogger)
-  // load plugins from userspace
-  if (config.pluginsDir) {
-    loadPlugins(seneca, config.pluginsDir, config)
-  }
   return customSeneca
 }

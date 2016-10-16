@@ -2,8 +2,6 @@ language: node_js
 node_js:
 - node
 - '6'
-- '5'
-- '4'
 after_success:
   - ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
 deploy:

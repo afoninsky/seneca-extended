@@ -1,9 +1,13 @@
 const { test } = require('ava')
 const logger = require(`${process.env.PWD}/src/logger`)
+const { loadPlugins } = require(`${process.env.PWD}/src/utils`)
 
 const seneca = require(`${process.env.PWD}/src`)({
-  logLevel: 'info',
-  pluginsDir: `${process.env.PWD}/test/fixtures/plugins`
+  logLevel: 'info'
+})
+
+test.before(() => {
+  return loadPlugins(seneca, `${process.env.PWD}/test/fixtures/plugins`)
 })
 
 test('promisified action', t => {

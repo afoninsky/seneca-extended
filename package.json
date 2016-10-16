@@ -10,17 +10,13 @@
     "test": "eslint src && nyc ava && nyc check-coverage --lines 90 --functions 80 --branches 60",
     "coverage": "nyc report --reporter=html && open coverage/index.html"
   },
-  "bin": {
-    "seneca-extended": "./bin/microservice.js"
-  },
   "author": "Andrey 'vkfont' Afoninsky",
   "license": "ISC",
   "devDependencies": {
     "ava": "^0.16.0",
     "coveralls": "^2.11.14",
     "eslint": "^3.8.0",
-    "nyc": "^8.3.1",
-    "require-dir": "^0.3.1"
+    "nyc": "^8.3.1"
   },
   "dependencies": {
     "bluebird": "^3.4.1",

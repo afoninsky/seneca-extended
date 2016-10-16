@@ -41,8 +41,9 @@ module.exports = {
     return Promise.each(Object.keys(plugins), name => {
       const item = plugins[name].index || plugins[name]
       if (!item.seneca) { return }
-      return (item.preload || Promise.resolve)(config).then(() => {
-        seneca.use(item.seneca, config[name])
+      const pluginConfig = config[name]
+      return (item.preload || Promise.resolve)(seneca, pluginConfig).then(() => {
+        seneca.use(item.seneca, pluginConfig)
         loaded.push(name)
       })
     }).then(() => loaded)
