@@ -1,16 +1,10 @@
 const { test } = require('ava')
 const logger = require(`${process.env.PWD}/src/logger`)
-const pluginsPath = `${process.env.PWD}/test/fixtures/plugins`
-const { loadPlugins } = require(`${process.env.PWD}/src/utils`)
 
 const seneca = require(`${process.env.PWD}/src`)({
-  logLevel: 'info'
+  logLevel: 'info',
+  pluginsDir: `${process.env.PWD}/test/fixtures/plugins`
 })
-
-test.before(() => {
-  return loadPlugins(seneca, pluginsPath)
-})
-
 
 test('promisified action', t => {
 	return seneca.actAsync('role:debug,cmd:echo', { some: 'payload'}).then(res => {

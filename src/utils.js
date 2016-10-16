@@ -31,13 +31,21 @@ module.exports = {
 
   serializeError, deserializeError,
 
+/**
+ * iterate over modules in `path` directory,
+ * init and load found seneca plugins with config[name] options
+ */
   loadPlugins(seneca, path, config = {}) {
+    const loaded = []
     const plugins = requireDir(path, {recurse: true})
     return Promise.each(Object.keys(plugins), name => {
       const item = plugins[name].index || plugins[name]
       if (!item.seneca) { return }
-      return (item.preload || Promise.resolve)(config).then(() => seneca.use(item.seneca))
-    })
+      return (item.preload || Promise.resolve)(config).then(() => {
+        seneca.use(item.seneca, config[name])
+        loaded.push(name)
+      })
+    }).then(() => loaded)
   },
 
 /**
