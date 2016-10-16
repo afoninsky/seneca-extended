@@ -6,8 +6,7 @@
   "scripts": {
     "test": "eslint src && nyc ava && nyc check-coverage --lines 90 --functions 80 --branches 60",
     "coverage": "nyc report --reporter=html && open coverage/index.html",
-    "build": "babel src -d build",
-    "publish": "npm test && npm run build && npm publish"
+    "build": "babel src -d build"
   },
   "bin": {
     "seneca-extended": "./bin/microservice.js"
