@@ -2,8 +2,8 @@ language: node_js
 node_js:
 - node
 - '6'
-- '5'
-- '4'
+before_deploy:
+  - npm run build
 deploy:
   provider: npm
   email: vkfont@yandex.ru

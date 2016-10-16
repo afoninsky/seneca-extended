@@ -31,7 +31,7 @@ module.exports = {
 
   serializeError, deserializeError,
 
-  loadPlugins(path, seneca, config) {
+  loadPlugins(seneca, path, config = {}) {
     const plugins = requireDir(path, {recurse: true})
     return Promise.each(Object.keys(plugins), name => {
       const item = plugins[name].index || plugins[name]

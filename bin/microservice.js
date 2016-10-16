@@ -11,7 +11,7 @@ const seneca = require('../src')()
 const { loadPlugins } = require('../utils')
 
 const requirePath = config.pluginsPath || `${process.cwd()}/src/seneca`
-loadPlugins(requirePath, seneca, config).then(loaded => {
+loadPlugins(seneca, requirePath, config).then(loaded => {
   // run http transport
   seneca.listen(config.listen)
   // run healthcheck server

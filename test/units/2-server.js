@@ -1,4 +1,3 @@
-const config = require('config')
 const { test } = require('ava')
 const logger = require(`${process.env.PWD}/src/logger`)
 const pluginsPath = `${process.env.PWD}/test/fixtures/plugins`
@@ -9,7 +8,7 @@ const seneca = require(`${process.env.PWD}/src`)({
 })
 
 test.before(() => {
-  return loadPlugins(pluginsPath, seneca, config)
+  return loadPlugins(seneca, pluginsPath)
 })
 
 
