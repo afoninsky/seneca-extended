@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- node
+- '6'
+- '5'
+- '4'
+deploy:
+  provider: npm
+  email: vkfont@yandex.ru
+  api_key:
+    secure: cKB3mrPbxbpP5DVQqf8w778Liti39a2p45SDZIN1VMx4OpeRyOxOpT7paoh6EWyRRmqjV6faqXas3tRaBaFkMtf1KjdE+AN51bSmcwBlyjqyMPnRNNncUUryEPfA9aGsolZ4p5O2CIxUQ3fBNhe0BX8t0z1d+LdY7xxO0oegl8KVVZx5JKcsEKVqKeTANuMgVoxuoL9WwbEQTyuLuJ7b5H8lsEW+WCqlzNCys7p7Sz1lQCm6LKreQhIEy6kOiMcYfTzbXDgDgtrPg+lw4svDNlHge/995UVH/dKSoJJxGh4sa9sSW4Ol0jrw89p2sF5ug3eCIzJSFTT6op7B/M5Ik2VvD8JX2YUnEm5BqnHXdOJqrd0lgja8ZKklfjr/bbpN7WBQjlXTRAVFjaOVq436+16nsRyRr2cHzKmR1q9jgOXt0gpWkX2/c8esJpItVQ8LunE2m3Lf0UjTljqq3hgd8BE+FfnulfmRwA+CPr1Rds0eHJQygnxLli60wKjfI45SODK4QelMH4+UzNPaFEi5SQGZumNIw4u4KZrsbP91xJfK4VMeqM9wESItEP9tjpDa2y4O33Scy1bSV0wr8nwm3ASYT0RnRspBFXp1yCLEryvuPk1p0uPYEORMiZ4k6mKuyWCSoWbmejXIlfXSp4kc6pBqtjPEpdXYaXRCiatcL1w=
+  on:
+    tags: true
+    repo: afoninsky/seneca-extended
