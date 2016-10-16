@@ -1,4 +1,3 @@
-global.Promise = require('bluebird')
 const pkg = require(`${process.env.PWD}/package`)
 const { decorateSeneca, createSenecaLogger } = require('./utils')
 
@@ -14,7 +13,7 @@ module.exports = (baseConfig = {}) => {
   // rewrite default seneca logger
   extendedConfig.internal = extendedConfig.internal || {}
   extendedConfig.internal.logger = createSenecaLogger(customLogger)
-  
+
   const config = Object.assign({}, baseConfig, extendedConfig)
   delete config.customLogger
 
