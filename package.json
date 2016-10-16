@@ -1,5 +1,5 @@
 {
-  "name": "seneca-edissons",
+  "name": "seneca-extended",
   "version": "1.1.0",
   "description": "Extend seneca library with additional features",
   "main": "build",
@@ -10,7 +10,7 @@
     "publish": "npm test && npm run build && npm publish"
   },
   "bin": {
-    "seneca-edissons": "./bin/microservice.js"
+    "seneca-extended": "./bin/microservice.js"
   },
   "author": "Andrey 'vkfont' Afoninsky",
   "license": "ISC",
