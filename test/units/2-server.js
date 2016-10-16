@@ -1,13 +1,17 @@
-// const config = require('config')
+const config = require('config')
 const { test } = require('ava')
-const seneca = require(`${process.env.PWD}/src`)()
-const { requireDirectory } = require(`${process.env.PWD}/src/utils`)
-const plugins = requireDirectory(`${process.env.PWD}/test/fixtures/plugins`)
 const logger = require(`${process.env.PWD}/src/logger`)
+const pluginsPath = `${process.env.PWD}/test/fixtures/plugins`
+const { loadPlugins } = require(`${process.env.PWD}/src/utils`)
 
-for (let name in plugins) {
-	seneca.use(plugins[name])
-}
+const seneca = require(`${process.env.PWD}/src`)({
+  logLevel: 'info'
+})
+
+test.before(() => {
+  return loadPlugins(pluginsPath, seneca, config)
+})
+
 
 test('promisified action', t => {
 	return seneca.actAsync('role:debug,cmd:echo', { some: 'payload'}).then(res => {

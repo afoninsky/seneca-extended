@@ -8,21 +8,15 @@ if (module.parent) { throw new Error('Im not a module, please launch me directly
 
 const config = require('config')
 const seneca = require('../src')()
-const { requireDirectory } = require('../src/utils')
+const { loadPlugins } = require('../utils')
 
-const plugins = requireDirectory(`${process.cwd()}/plugins`)
-const services = process.argv.length > 2 ? process.argv.slice(2) : Object.keys(plugins)
-
-services.forEach(name => {
-  if (!plugins[name]) { throw new Error(`Cant find plugin: ${name}`) }
-  seneca.use(plugins[name], config[name])
+const requirePath = config.pluginsPath || `${process.cwd()}/src/seneca`
+loadPlugins(requirePath, seneca, config).then(loaded => {
+  // run http transport
+  seneca.listen(config.listen)
+  // run healthcheck server
+  if (config.health && config.health.port) {
+    require('../src/health').listen(config.health.port)
+  }
+  seneca.logger.info(`Services started: ${loaded.join(', ')}`)
 })
-
-if (!services.length) { throw new Error('no plugins loaded') }
-
-seneca.logger.info(`Services started: ${services.join(', ')}`)
-seneca.listen(config.listen)
-
-if (config.health) {
-  require('../src/health').listen(config.health)
-}

@@ -11,13 +11,10 @@ module.exports = (baseConfig = {}) => {
     level: baseConfig.logLevel || 'debug'
   })
 
-  // create custom logger
-  if (baseConfig.customLogger) {
-    baseConfig.internal = baseConfig.internal || {}
-    extendedConfig.internal = extendedConfig.internal || {}
-    extendedConfig.internal.logger = createSenecaLogger(customLogger)
-  }
-
+  // rewrite default seneca logger
+  extendedConfig.internal = extendedConfig.internal || {}
+  extendedConfig.internal.logger = createSenecaLogger(customLogger)
+  
   const config = Object.assign({}, baseConfig, extendedConfig)
   delete config.customLogger
 

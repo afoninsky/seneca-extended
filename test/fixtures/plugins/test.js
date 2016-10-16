@@ -1,15 +1,22 @@
-module.exports = function() {
+const route = {
+  echo: { role: 'debug', cmd: 'echo' },
+  error: { role: 'debug', cmd: 'error' },
+  errorInternal: { role: 'debug', cmd: 'error-internal' }
+}
 
-  this.add('role:debug,cmd:echo', (message, done) => {
-    done(null, message)
-  })
+module.exports = {
 
-  this.add('role:debug,cmd:error', (message, done) => {
-    this.emitError(new Error('custom error'), done)
-  })
+  seneca: function () {
+    this.add(route.echo, (message, done) => {
+      done(null, message)
+    })
 
-  this.add('role:debug,cmd:error-internal', (message, done) => {
-    badfunction()
-  })
+    this.add(route.error, (message, done) => {
+      this.emitError(new Error('custom error'), done)
+    })
 
+    this.add(route.errorInternal, () => {
+      badfunction()
+    })
+  }
 }

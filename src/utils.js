@@ -1,7 +1,6 @@
 const Promise = require('bluebird')
 const ld = require('lodash')
-const fs = require('fs')
-const path = require('path')
+const requireDir = require('require-dir')
 
 /**
  * simple error serializer/deserializer
@@ -12,9 +11,12 @@ const path = require('path')
  * - check if buffer passed instead of json
  */
 function serializeError(err) {
-  const resError = ld.pick(err, ['name', 'code', 'message', 'statusCode', 'payload'])
-  resError.stack = err.stack.split('\n').slice(0, 6).join('\n')
-  return resError
+  if (err instanceof Error) {
+    const resError = ld.pick(err, ['name', 'code', 'message', 'statusCode', 'payload'])
+    resError.stack = err.stack.split('\n').slice(0, 6).join('\n')
+    return resError
+  }
+  return err
 }
 
 function deserializeError(obj) {
@@ -29,22 +31,14 @@ module.exports = {
 
   serializeError, deserializeError,
 
-/**
- * return object with modules in specified directory
- */
-  requireDirectory(dir, onlyFunctions = true) {
-    return fs.readdirSync(dir).map(name => path.basename(name, '.js')).reduce((accumulator, name) => {
-      const obj = require(`${dir}/${name}`)
-      if (!onlyFunctions || obj instanceof Function) {
-        accumulator[name] = obj
-      }
-      return accumulator
-    }, {})
+  loadPlugins(path, seneca, config) {
+    const plugins = requireDir(path, {recurse: true})
+    return Promise.each(Object.keys(plugins), name => {
+      const item = plugins[name].index || plugins[name]
+      if (!item.seneca) { return }
+      return (item.preload || Promise.resolve)(config).then(() => seneca.use(item.seneca))
+    })
   },
-
-/**
- *
- */
 
 /**
  * replace default senecajs logger with custom
