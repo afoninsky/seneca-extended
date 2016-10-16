@@ -1,6 +1,6 @@
 {
   "name": "seneca-extended",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Extend seneca library with additional features",
   "engines": {
     "node": ">=6.0.0"
