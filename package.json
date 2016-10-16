@@ -5,6 +5,14 @@
   "engines": {
     "node": ">=6.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afoninsky/seneca-extended.git"
+  },
+  "bugs": {
+    "url": "https://github.com/afoninsky/seneca-extended/issues"
+  },
+  "homepage": "https://github.com/afoninsky/seneca-extended#readme",
   "main": "src/index",
   "scripts": {
     "test": "eslint src && nyc ava && nyc check-coverage --lines 90 --functions 80 --branches 60",
