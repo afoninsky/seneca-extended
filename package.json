@@ -1,6 +1,6 @@
 {
   "name": "seneca-edissons",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Extend seneca library with additional features",
   "main": "build",
   "scripts": {
