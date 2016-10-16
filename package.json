@@ -1,7 +1,7 @@
 {
   "name": "seneca-edissons",
-  "version": "1.0.4",
-  "description": "Microservice framework for edissons infrastructure",
+  "version": "1.0.3",
+  "description": "Extend seneca library with additional features",
   "main": "build",
   "scripts": {
     "test": "eslint src && nyc ava && nyc check-coverage --lines 90 --functions 80 --branches 60",

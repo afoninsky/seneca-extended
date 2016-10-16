@@ -1,6 +1,5 @@
 node_modules/
 debug/
-build/*
 .DS_Store
 *.log
 .nyc_output/
