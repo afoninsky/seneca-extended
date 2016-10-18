@@ -9,6 +9,8 @@ __ sorry no readme yet, i will create it ASAP __
 .actCustom
 .actAsync
 .logger
+.useAsync
+.routes
 
 ### 2do: basic examples and plugins architecture
 

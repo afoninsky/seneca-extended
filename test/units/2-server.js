@@ -1,13 +1,26 @@
 const { test } = require('ava')
 const logger = require(`${process.env.PWD}/src/logger`)
-const { loadPlugins } = require(`${process.env.PWD}/src/utils`)
 
 const seneca = require(`${process.env.PWD}/src`)({
   logLevel: 'info'
 })
 
+const customPlugin = require(`${process.env.PWD}/test/fixtures/plugins/custom`)
+
 test.before(() => {
-  return loadPlugins(seneca, `${process.env.PWD}/test/fixtures/plugins`)
+  return seneca.useAsync(customPlugin)
+})
+
+test('load base plugin', () => {
+	return seneca.useAsync(`${process.env.PWD}/test/fixtures/plugins/base`)
+})
+
+test('load incorect plugin', t => {
+  t.throws(seneca.useAsync(`${process.env.PWD}/test/fixtures/plugins/not-a-plugin`), /not a seneca plugin/)
+})
+
+test('ensure routes loaded', t => {
+  t.deepEqual(seneca.routes, customPlugin.routes)
 })
 
 test('promisified action', t => {

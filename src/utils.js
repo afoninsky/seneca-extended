@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const ld = require('lodash')
-const requireDir = require('require-dir')
 
 /**
  * simple error serializer/deserializer
@@ -31,23 +30,6 @@ module.exports = {
 
   serializeError, deserializeError,
 
-/**
- * iterate over modules in `path` directory,
- * init and load found seneca plugins with config[name] options
- */
-  loadPlugins(seneca, path, config = {}) {
-    const loaded = []
-    const plugins = requireDir(path, {recurse: true})
-    return Promise.each(Object.keys(plugins), name => {
-      const item = plugins[name].index || plugins[name]
-      if (!item.seneca) { return }
-      const pluginConfig = config[name]
-      return (item.preload || Promise.resolve)(seneca, pluginConfig).then(() => {
-        seneca.use(item.seneca, pluginConfig)
-        loaded.push(name)
-      })
-    }).then(() => loaded)
-  },
 
 /**
  * replace default senecajs logger with custom
@@ -73,10 +55,12 @@ module.exports = {
  * append additional methods into seneca instanse: promisifed actions, common error emitter etc
  */
   decorateSeneca(seneca, logger) {
+
+    // extended version of .act with some sugar and error catchinh
     const act = (...data) => {
       const callback = typeof data[data.length - 1] === 'function' ? data.pop() : ld.noop
 
-      // sugar stuff: remove from route arguments passed as payload
+      // remove from route arguments passed as payload
       if (data.length > 1) {
         const payload = data[data.length - 1]
         if (ld.isPlainObject(data[0]) && ld.isPlainObject(payload)) {
@@ -101,7 +85,33 @@ module.exports = {
       })
     }
 
+    // extended verison of .use with ability to init plugins before load
+    const useAsync = (input, options) => {
+      const plugin = typeof input === 'string' ? require(input) : input
 
+      // core functionality
+      if (ld.isFunction(plugin)) {
+        seneca.use(plugin, options)
+        return Promise.resolve()
+      }
+
+      // extended plugin (with possible .init and .routes)
+      if (!plugin.seneca) {
+        return Promise.reject(new Error('not a seneca plugin'))
+      }
+      return (plugin.init || Promise.resolve)(seneca, options).then(() => {
+        seneca.use(plugin.seneca, options)
+        if (plugin.routes) {
+          for (let name in plugin.routes) {
+            seneca.routes[name] = plugin.routes[name]
+          }
+        }
+      })
+
+    }
+
+    seneca.decorate('routes', {})
+    seneca.decorate('useAsync', useAsync)
     seneca.decorate('actAsync', Promise.promisify(act, {context: seneca}))
     seneca.decorate('actCustom', act)
     seneca.decorate('emitError', emitError)

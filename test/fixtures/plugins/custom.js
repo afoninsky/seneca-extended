@@ -6,6 +6,10 @@ const route = {
 
 module.exports = {
 
+  routes: route,
+
+  init: () => Promise.resolve(),
+
   seneca: function () {
     this.add(route.echo, (message, done) => {
       done(null, message)

@@ -30,9 +30,7 @@
     "bluebird": "^3.4.1",
     "bunyan": "^1.8.1",
     "lodash": "^4.16.4",
-    "seneca": "^3.2.1",
-    "config": "^1.21.0",
-    "require-dir": "^0.3.1"
+    "seneca": "^3.2.1"
   },
   "ava": {
     "verbose": true,
