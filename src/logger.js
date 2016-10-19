@@ -1,5 +1,5 @@
 /**
-  application logger, support logging to console and remote logging service
+  application logger
   based on https://www.npmjs.com/package/bunyan
 */
 const bunyan = require('bunyan')

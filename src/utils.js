@@ -41,6 +41,7 @@ module.exports = {
 			return {
 				extend: {
 					logger: (context, payload) => {
+// 2do: decrease default log verbosity
 // [ 'actid', 'msg', 'entry', 'prior', 'gate', 'caller', 'meta', 'client','listen', 'transport', 'kind', 'case',
 // 'duration', 'result', 'level', 'plugin_name', 'plugin_tag', 'pattern', 'seneca', 'when' ]
 						customLogger[payload.level](payload)
@@ -56,7 +57,7 @@ module.exports = {
  */
   decorateSeneca(seneca, logger) {
 
-    // extended version of .act with some sugar and error catchinh
+    // extended version of .act with some sugar and error catching
     const act = (...data) => {
       const callback = typeof data[data.length - 1] === 'function' ? data.pop() : ld.noop
 
