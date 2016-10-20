@@ -15,8 +15,9 @@ When i started building application using [senecajs] framework, i didn't find th
 * log messages in own format instead of verbose seneca output
 * some other stuff
 
-This wrapper try to solve most of this troubles, offering common interface without changing the basic functionality in my own way. Pull requests and feedbacks are welcome.
+This wrapper try to solve most of this troubles, offering common interface without changing the basic functionality in my own way.
 
+__WARN: this module don't works in nodejs <6.x (feel free to pull reques with babel support if you need earlier versions support)__
 
 ### Install
 ```
@@ -120,7 +121,7 @@ Lightweight logger without default seneca verbosity (should be, just lightweight
 [badge-travis]: https://travis-ci.org/afoninsky/seneca-extended.svg?branch=master
 [coveralls]: https://coveralls.io/github/afoninsky/seneca-extended?branch=master
 [badge-coveralls]: https://coveralls.io/repos/github/afoninsky/seneca-extended/badge.svg?branch=master
-[deps]: https://david-dm.org/afoninsky/seneca-extended.svg
+[deps]: https://david-dm.org/afoninsky/seneca-extended
 [badge-deps]: https://david-dm.org/afoninsky/seneca-extended.svg
-[npm]: https://www.npmjs.com/package/seneca
+[npm]: https://www.npmjs.com/package/seneca-extended
 [badge-npm]: https://badge.fury.io/js/seneca-extended.svg
