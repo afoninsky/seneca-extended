@@ -61,7 +61,7 @@ module.exports = {
     const act = (...data) => {
       const callback = typeof data[data.length - 1] === 'function' ? data.pop() : ld.noop
 
-      // remove from route arguments passed as payload
+      // remove from route parguments passed as payload
       if (data.length > 1) {
         const payload = data[data.length - 1]
         if (ld.isPlainObject(data[0]) && ld.isPlainObject(payload)) {
@@ -87,7 +87,7 @@ module.exports = {
     }
 
     // extended verison of .use with ability to init plugins before load
-    const useAsync = (input, options) => {
+    const useAsync = (input, options, name) => {
       const plugin = typeof input === 'string' ? require(input) : input
 
       // core functionality
@@ -102,10 +102,8 @@ module.exports = {
       }
       return (plugin.init || Promise.resolve)(seneca, options).then(() => {
         seneca.use(plugin.seneca, options)
-        if (plugin.routes) {
-          for (let name in plugin.routes) {
-            seneca.routes[name] = plugin.routes[name]
-          }
+        if (name && plugin.routes) {
+          seneca.routes[name] = Object.assign({}, plugin.routes)
         }
       })
 

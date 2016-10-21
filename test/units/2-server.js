@@ -8,7 +8,7 @@ const seneca = require(`${process.env.PWD}/src`)({
 const customPlugin = require(`${process.env.PWD}/test/fixtures/plugins/custom`)
 
 test.before(() => {
-  return seneca.useAsync(customPlugin)
+  return seneca.useAsync(customPlugin, {}, 'custom')
 })
 
 test('load base plugin', () => {
@@ -20,7 +20,7 @@ test('load incorect plugin', t => {
 })
 
 test('ensure routes loaded', t => {
-  t.deepEqual(seneca.routes, customPlugin.routes)
+  t.deepEqual(seneca.routes.custom, customPlugin.routes)
 })
 
 test('promisified action', t => {
