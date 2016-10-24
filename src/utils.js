@@ -26,6 +26,8 @@ function deserializeError(obj) {
   return err
 }
 
+const logLevels = { trace: 10, debug: 20, info: 30, warn: 40, error: 50, fatal: 60 }
+
 module.exports = {
 
   serializeError, deserializeError,
@@ -34,17 +36,29 @@ module.exports = {
 /**
  * replace default senecajs logger with custom
  */
-  createSenecaLogger(customLogger) {
+  createSenecaLogger(customLogger, logLevel) {
 		// https://github.com/senecajs/seneca/blob/master/docs/examples/custom-logger.js
 		function SenecaLogger () {}
+    const tresholdLevel = logLevels[logLevel]
 		SenecaLogger.preload = function () {
 			return {
 				extend: {
 					logger: (context, payload) => {
-// 2do: decrease default log verbosity
-// [ 'actid', 'msg', 'entry', 'prior', 'gate', 'caller', 'meta', 'client','listen', 'transport', 'kind', 'case',
-// 'duration', 'result', 'level', 'plugin_name', 'plugin_tag', 'pattern', 'seneca', 'when' ]
-						customLogger[payload.level](payload)
+            // 2do: ignore bunyan logger for now
+            // 2do: decrease verbosity
+            const currentLogLevel = logLevels[payload.level || 'debug']
+            if (currentLogLevel < tresholdLevel) { return }
+            // customLogger[payload.level](payload)
+            switch (payload.level) {
+              case 'warn':
+              case 'error':
+                console.error(payload)
+                break
+              case 'info':
+              case 'debug':
+              default:
+                console.log(payload)
+            }
 					}
 				}
 			}
@@ -68,7 +82,6 @@ module.exports = {
           data[0] = ld.omit(data[0], Object.keys(payload))
         }
       }
-
       // emit error from data, temporal workaround:
       // https://github.com/senecajs/seneca/issues/523#issuecomment-245712042
       seneca.act(...data, (err, res) => {
@@ -111,8 +124,8 @@ module.exports = {
 
     seneca.decorate('routes', {})
     seneca.decorate('useAsync', useAsync)
-    seneca.decorate('actAsync', Promise.promisify(act, {context: seneca}))
     seneca.decorate('actCustom', act)
+    seneca.decorate('actAsync', Promise.promisify(act, {context: seneca}))
     seneca.decorate('emitError', emitError)
     seneca.decorate('logger', logger) // append clean logger without all seneca-specific stuff
     return seneca

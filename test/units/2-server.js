@@ -2,7 +2,7 @@ const { test } = require('ava')
 const logger = require(`${process.env.PWD}/src/logger`)
 
 const seneca = require(`${process.env.PWD}/src`)({
-  logLevel: 'info'
+  logLevel: 'fatal' // mute errors
 })
 
 const customPlugin = require(`${process.env.PWD}/test/fixtures/plugins/custom`)
@@ -58,7 +58,7 @@ test('log something', t => {
 
 
   const log = logger({
-    name: 'test',
+    name: 'test'
   })
 	log.debug('some message')
 	log.debug(new Error('serialize me plzkthx'))
