@@ -4,7 +4,7 @@ const { decorateSeneca, createSenecaLogger } = require(`${__dirname}/utils`)
 module.exports = (baseConfig = {}) => {
 
   const extendedConfig = {}
-  const logLevel = baseConfig.logLevel || 'debug'
+  const logLevel = baseConfig.logLevel || 'info'
   const customLogger = require(`${__dirname}/logger`)({
     name: pkg.name,
     version: pkg.version,

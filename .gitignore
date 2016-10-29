@@ -4,3 +4,4 @@ debug/
 *.log
 .nyc_output/
 coverage/
+yarn.lock
