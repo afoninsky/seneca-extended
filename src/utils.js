@@ -117,7 +117,8 @@ module.exports = {
         seneca.use(plugin.seneca, options)
         const routesGroup = name || plugin.name
         if (routesGroup && plugin.routes) {
-          seneca.routes[routesGroup] = Object.assign({}, plugin.routes)
+          seneca.routes[routesGroup] = seneca.routes[routesGroup] || {}
+          Object.assign(seneca.routes[routesGroup], plugin.routes)
         }
       })
 
