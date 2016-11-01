@@ -10,14 +10,14 @@
 When i started building application using [senecajs] framework, i didn't find the easy ways to solve some of problems:
 
 * ability to use promises
-* throw errors on server and catch them by client
+* throw errors on server and catch them by client (with custom payload)
 * initialize plugins on asynchronius way before load them into framework
 * log messages in own format instead of verbose seneca output
 * some other stuff
 
 This wrapper try to solve most of this troubles, offering common interface without changing the basic functionality in my own way.
 
-__WARN: this module don't works in nodejs <6.x (feel free to pull reques with babel support if you need earlier versions support)__
+__WARN: this module don't works in nodejs <6.x (no time for babel, feel free to pull reques with babel support if you need earlier versions support)__
 
 ### Install
 ```
@@ -31,25 +31,47 @@ $ npm run test
 
 ### Quck Example
 ```js
+const ld = require('lodash')
 const seneca = require('../src')()
 // `seneca` is fully usable seneca instance with build-in additional features
 
 /** default senecajs plugin **/
 const basicPlugin = function (config) {
+
+  this.add({ role: 'example', method: 'ping' }, (message, done) => {
+    // in case of exception here - error will not pass to remote client
+    done(null, { ping: 'pong'} )
+  })
+
   this.add('role:example,method:error', (message, done) => {
     this.emitError(new Error('this error will be passed to client'), done)
   })
 }
 
 /** extended plugin **/
+const route = {
+  ping: 'role:example,method:ping',
+  error: 'role:example,method:error'
+}
 const extendedPlugin = {
+  name: 'example', // exported routes will be available in: seneca.routes.example.*
+  routes: ld.pick(route, ['ping']) // will export only route 'ping' for example
   init: function (senecaInstance, config) {
     // this method will be called on plugin load, async code can be used here
-    return Promise.resolve()
+    return Promise.delay(300)
   },
   seneca: function (config) {
-    // basic seneca plugin
-    this.add('role:example,method:ping', (message, done) => done(null, { ping: 'pong'} ))
+    // basoc seneca route add
+    this.add('role:example,method:sometest', (message, done) => done(null, { ping: 'sometes'} ))
+    this.addAsync(route.ping, message => {
+      // we are in promise now, so can just return result - all error will be handled
+      return { ping: 'pong' }
+    })
+    this.addAsync(route.error, message => {
+      const error = new Error('this error will be passed to client')
+      error.payload = { additional: 'payload' } // we can evend add payload
+      throw error
+    })
   },
   someOther: function () {
     // we can export other method for futher usage
@@ -61,7 +83,7 @@ const extendedPlugin = {
 const sampleOptions = { some: 'config' }
 
 // now seneca able to load not only synchronous code...
-seneca.useAsync(basicPlugin, sampleOptions) // same as seneca.use
+seneca.useAsync(basicPlugin, sampleOptions) // same as synchronous seneca.use
 seneca.actAsync('role:example,method:error').catch(err => {
   console.log('catched from error:', err.message)
 })
@@ -69,7 +91,8 @@ seneca.actAsync('role:example,method:error').catch(err => {
 // ... but also preload plugins methods as promises
 seneca.useAsync(extendedPlugin, sampleOptions).then(() => {
   console.log('async plugins loaded and usable now')
-  seneca.actAsync('role:example,method:ping', { some: 'payload' }).then(res => {
+  // 'role:example,method:ping'
+  seneca.actAsync(seneca.example.ping, { some: 'payload' }).then(res => {
     console.log('got from ping:', res)
   })
 })
@@ -79,11 +102,14 @@ seneca.useAsync(extendedPlugin, sampleOptions).then(() => {
 // catched from error: this error will be passed to client
 // got from ping: { ping: 'pong' }
 ```
-_Advanced example_: custom microservice with deployment into kubernetes, configuration files and common launcher - [micro-test]
+_Advanced example_: custom microservice with deployment into kubernetes, configuration files and common launcher - [micro-test] (maybe outdated)
 
 ###  API
 
 Core documentation available at [oficial API page](http://senecajs.org/api/). Following methods are added by `seneca-extended` and not usable without this module:
+
+##### .addAsync(route, promisifiedCallback)
+Extened version of `seneca.add` with promisified callback.
 
 ##### .useAsync(plugin, [config]) -> Promise
 Extened version of `seneca.use` with ability to load promisified plugins.
@@ -102,7 +128,7 @@ this.add('...', (message, done) => {
 ```
 
 ##### .actCustom(...)
-Extended version of `seneca.act` with error catching.
+Extended version of `seneca.act` with error catching (useful if you dont need response)
 
 ##### .actAsync
 Promisified version of `seneca.actCustom`.

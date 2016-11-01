@@ -26,6 +26,13 @@ function deserializeError(obj) {
   return err
 }
 
+// send stringified error to remote host
+function emitError(error, callback) {
+  callback(null, {
+    error: serializeError(error)
+  })
+}
+
 const logLevels = { trace: 10, debug: 20, info: 30, warn: 40, error: 50, fatal: 60 }
 
 module.exports = {
@@ -71,8 +78,37 @@ module.exports = {
  */
   decorateSeneca(seneca, logger) {
 
+    // extended version of .add with promises
+    const addAsync = (...data) => {
+      const nativeDone = data.pop()
+      if (typeof nativeDone !== 'function') {
+        throw new Error('.addCustom/.addAsinc: callback expected')
+      }
+      const senecaOptions = seneca.export('options')
+      const timeout = senecaOptions.useTimeout || senecaOptions.timeout - 10
+      const doneWrapped = (message, done) => {
+        let timer = setTimeout(() => {
+          timer = null
+          const err = new Error(`timeout on route ${JSON.stringify(data[0])}`)
+          emitError(err, done)
+        }, timeout)
+        Promise.resolve().then(() => {
+          return nativeDone(message)
+        }).then(res => {
+          if (!timer) { return }
+          clearTimeout(timer)
+          done(null, res)
+        }).catch(err => {
+          if (!timer) { return }
+          clearTimeout(timer)
+          emitError(err, done)
+        })
+      }
+      return seneca.add(...data, doneWrapped)
+    }
+
     // extended version of .act with some sugar and error catching
-    const act = (...data) => {
+    const actCustom = (...data) => {
       const callback = typeof data[data.length - 1] === 'function' ? data.pop() : ld.noop
 
       // remove from route parguments passed as payload
@@ -84,18 +120,10 @@ module.exports = {
       }
       // emit error from data, temporal workaround:
       // https://github.com/senecajs/seneca/issues/523#issuecomment-245712042
-      seneca.act(...data, (err, res) => {
+      return seneca.act(...data, (err, res) => {
         if (err) { return callback(err) }
-        // 2do: !!! find how to pass additional error fields to seneca error (ex: .payload is not passed)
         if (res && res.error) { return callback(deserializeError(res.error)) }
         callback(null, res)
-      })
-    }
-
-    // send stringified error to remote host
-    const emitError = (error, callback) => {
-      callback(null, {
-        error: serializeError(error)
       })
     }
 
@@ -121,13 +149,13 @@ module.exports = {
           Object.assign(seneca.routes[routesGroup], plugin.routes)
         }
       })
-
     }
 
     seneca.decorate('routes', {})
     seneca.decorate('useAsync', useAsync)
-    seneca.decorate('actCustom', act)
-    seneca.decorate('actAsync', Promise.promisify(act, {context: seneca}))
+    seneca.decorate('actCustom', actCustom)
+    seneca.decorate('actAsync', Promise.promisify(actCustom, {context: seneca}))
+    seneca.decorate('addAsync', addAsync)
     seneca.decorate('emitError', emitError)
     seneca.decorate('logger', logger) // append clean logger without all seneca-specific stuff
     return seneca
